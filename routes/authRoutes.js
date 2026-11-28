@@ -1,27 +1,32 @@
+
 const express = require("express");
 const router = express.Router();
 
+// Controllers
 const {
     adminLogin,
-    getAdminDashboard
+    getAdminDashboard,
+    employeeLogin,
+    getEmployeeDashboard,
+    getEmployeeProfile
 } = require("../controllers/authController");
 
+// Authentication middleware
 const verifyToken = require("../middleware/authMiddleware");
-const verifyAdmin = require("../middleware/roleMiddleware");
 
-// console.log("AUTH ROUTES LOADED");
+// Role middleware
+const {
+    verifyAdmin,
+    verifyEmployee
+} = require("../middleware/roleMiddleware");
 
-// // Test route
-// router.get("/test", (req, res) => {
-//     res.status(200).json({
-//         message: "Authentication routes are working!"
-//     });
-// });
 
-// Login route
+// ===============================
+// ADMIN ROUTES
+// ===============================
+
 router.post("/admin-login", adminLogin);
 
-// Dashboard route
 router.get(
     "/admin-dashboard",
     verifyToken,
@@ -29,4 +34,26 @@ router.get(
     getAdminDashboard
 );
 
+
+// ===============================
+// EMPLOYEE ROUTES
+// ===============================
+
+// Employee Login
+router.post("/employee-login", employeeLogin);
+
+// Employee Dashboard
+router.get(
+    "/employee-dashboard",
+    verifyToken,
+    verifyEmployee,
+    getEmployeeDashboard
+);
+// Get the logged-in employee's profile
+router.get(
+    "/employee-profile",
+    verifyToken,
+    verifyEmployee,
+    getEmployeeProfile
+);
 module.exports = router;
